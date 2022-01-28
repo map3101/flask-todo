@@ -31,7 +31,10 @@
     {% endif %}
 
     <form action="/" method="POST">
-        <input type="text" name="content" id="content">
+        <!-- Input de email, type="email" para validação -->
+        <input placeholder="Email" type="email" name="email" id="email">
+        <input placeholder="Task" type="text" name="content" id="content">
+        <br>
         <input type="submit" value="Add Task">
     </form>
 </div>
