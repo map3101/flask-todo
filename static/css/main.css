@@ -39,3 +39,19 @@ td {
     border: none;
     border-bottom: 1px solid black;
 }
+
+#addButton {
+    width: 140px;
+    height: 40px;
+    border-radius: 0;
+    cursor: pointer;
+    border: 1px solid #aaa;
+    color: #838383;
+    background: white;
+    transition: all 0.2s;
+}
+
+#addButton:hover {
+    background: #aaa;
+    color: white;
+}
