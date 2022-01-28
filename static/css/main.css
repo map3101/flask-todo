@@ -52,6 +52,7 @@ td {
     border: 1px solid #aaa;
     color: #838383;
     background: white;
+    margin-bottom: 5px;
     transition: all 0.2s;
 }
 
