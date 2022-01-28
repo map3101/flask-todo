@@ -36,6 +36,7 @@ def index():
         except:
             return 'ERROR'
     else:
+        # Salva as tarefas na ordem das mais recentes primeiro
         tasks = Todo.query.order_by(Todo.date_created.desc()).all()
         return render_template('index.html', tasks=tasks)
 
@@ -55,6 +56,7 @@ def update(id):
     task = Todo.query.get_or_404(id)
     if request.method == 'POST':
         task.content = request.form['content']
+        task.email = request.form['email']
         try:
             db.session.commit()
             return redirect('/')
