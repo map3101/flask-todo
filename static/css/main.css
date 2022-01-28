@@ -60,3 +60,14 @@ td {
     background: #aaa;
     color: white;
 }
+
+#link {
+    text-decoration: none;
+    color: rgb(75, 75, 75);
+    margin: 10px;
+    transition: color 0.2s;
+}
+
+#link:hover {
+    color: #838383;
+}

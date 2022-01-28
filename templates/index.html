@@ -31,9 +31,11 @@
             <td>{{ task.email }}</td>
             <td>{{ task.date_created.date() }}</td>
             <td>
-                <a href="/delete/{{task.id}}">Delete</a>
+                <a id="link" href="/delete/{{task.id}}">Delete</a>
                 <br>
-                <a href="/update/{{task.id}}">Update</a>
+                <a id="link" href="/update/{{task.id}}">Update</a>
+                <br>
+                <a id="link" href="/mail/{{task.id}}">Email</a>
             </td>
         </tr>
         {% endfor %}
