@@ -1,4 +1,5 @@
 from crypt import methods
+from unittest import expectedFailure
 from flask import Flask, redirect, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -41,6 +42,19 @@ def delete(id):
         return redirect('/')
     except:
         return 'ERROR'
+
+@app.route('/update/<int:id>', methods=['GET', 'POST'])
+def update(id):
+    task = Todo.query.get_or_404(id)
+    if request.method == 'POST':
+        task.content = request.form['content']
+        try:
+            db.session.commit()
+            return redirect('/')
+        except:
+            return 'ERROR'
+    else:
+        return render_template('update.html', task=task)
 
 if __name__ == "__main__":
     app.run(debug=True)
