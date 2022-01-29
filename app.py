@@ -1,7 +1,6 @@
-from flask_mail import Mail, Message
-from unittest import expectedFailure
 from flask import Flask, redirect, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail, Message
 from datetime import datetime
 import os
 
@@ -13,13 +12,17 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 # Configurações para o envio de emails
 # Conta que enviará os emails é do gmail, logo utilizarei o mail server deles
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+# Usar SSL e porta 465
+app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_PORT'] = 465
 # Para o username e senha, são utilizadas variáveis de ambiente
 app.config['MAIL_USERNAME'] = os.environ.get("MAIL_USERNAME")
 app.config['MAIL_PASSWORD'] = os.environ.get("MAIL_PASSWORD")
-app.config['MAIL_DEFAULT_SENDER'] = os.environ.get("MAIL_DEFAULT_SENDER")
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get("MAIL_USERNAME")
+# Inicialização do SQLAlchemy
 db = SQLAlchemy(app)
-mail = Mail()
+# Inicialização do flask-mail
+mail = Mail(app)
 
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -77,16 +80,22 @@ def update(id):
 
 # Rota para mandar email com conteúdo da tarefa
 @app.route('/mail/<int:id>', methods=['GET'])
-def mail(id):
+def send_mail(id):
     # Query no banco de dados para pegar as infos do todo
     task = Todo.query.get_or_404(id)
     # Monta a mensagem que será enviada
     msg = Message(
         body=task.content,
-        subject="Task Manager - Task " + task.date_created,
+        subject="Task Manager - Task " + str(task.date_created.date()),
         recipients=[task.email]
-        )
-    return 
+    )
+    try:
+        # Tenta enviar a mensagem
+        mail.send(msg)
+        return 'EMAIL SENT!'
+    except:
+        return 'ERROR'
+    
 
 if __name__ == "__main__":
     app.run(debug=True)
