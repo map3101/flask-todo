@@ -152,3 +152,25 @@ Para permitir uma melhor usabilidade e simular um app mais real.
 Um form simples que permite o usuário editar o username ou senha. É necessário digitar a senha atual para que as mudanças sejam realizadas, caso esse campo não for preenchido ou a senha esteja incorreta uma mensagem de erro será renderizada.
 ###### Rota /edituser/<int:id>
 O parâmetro id é utilizado para realizar uma query e resgatar as informações do usuário logado. Com o submit do form a verificação da senha atual é realizada. Caso estiver correta, o programa atribui os valores que foram alterados e redireciona para a tela inicial.
+
+#### 3. Preenchimento automático de email para uma nova tarefa registrada
+Caso o usuário não preencha o campo email para adicionar uma nova tarefa ela é criada com o email do usuário logado. Se o usuário desejar criar a tarefa com outro email, basta preencher o campo do form.
+##### Porque essa funcionalidade foi implementada?
+Para facilitar o registro de uma nova tarefa, mais agilidade e melhor usabilidade.
+##### O que foi feito
+###### Editar a rota / 
+Quando o form é enviado e a rota recebe uma request do tipo POST, ocorre a verificação do campo de email, caso esse esteja vazio utilizo o `current_user` do Flask-Login para pegar o email do usuário logado e criar a nova task.
+```
+      if request.method == 'POST':
+        # Pega valores do form de adicionar tarefa content e email
+        task_content = request.form['content']
+        task_email = ""
+        # Caso o campo de email não tenha sido preenchido, a nova tarefa será salva com o email do usuário logado
+        if len(request.form['email']) == 0:
+            task_email = current_user.email
+        # Se o campo for preenchido, o email da tarefa será o valor que vier no formulário
+        else:
+            task_email = request.form['email']
+        # Cria uma nova tarefa baseado na Model Todo
+        new_task = Todo(content=task_content, email=task_email, user_id=current_user.id)  
+```
