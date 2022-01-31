@@ -72,7 +72,13 @@ def index():
     if request.method == 'POST':
         # Pega valores do form de adicionar tarefa content e email
         task_content = request.form['content']
-        task_email = request.form['email']
+        task_email = ""
+        # Caso o campo de email não tenha sido preenchido, a nova tarefa será salva com o email do usuário logado
+        if len(request.form['email']) == 0:
+            task_email = current_user.email
+        # Se o campo for preenchido, o email da tarefa será o valor que vier no formulário
+        else:
+            task_email = request.form['email']
         # Cria uma nova tarefa baseado na Model Todo
         new_task = Todo(content=task_content, email=task_email, user_id=current_user.id)
 
