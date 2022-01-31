@@ -42,8 +42,8 @@ Com isso posso registrar um email para cada tarefa. O próximo passo foi editar 
         <input type="submit" value="Add Task" id="addButton">
     </form>
 ```
-Agora temos um form completo para a segunda etapa.
-**Implementação da view de enviar emails**
+Agora temos um form completo para a segunda etapa. 
+**Implementação da view de enviar emails** 
 Para essa funcionalidade foi utilizado o Flask-Mail. Seguindo a documentação configurei as seguintes variáveis do app:
 ```
 # Configurações para o envio de emails
