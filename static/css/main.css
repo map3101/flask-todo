@@ -35,13 +35,14 @@ td {
     margin-top: 20px;
 }
 
-#content, #email {
+#content, #email, #username, #password, #currentpassword {
     width: 70%;
     height: 20px;
     margin: 5px;
     outline: none;
     border: none;
     border-bottom: 1px solid black;
+    margin: 10px;
 }
 
 #addButton {
