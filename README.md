@@ -91,4 +91,55 @@ def send_mail(id):
 
 ### Funcionalidades da terceira etapa
 Foram implementadas 3 funcionalidades.
-#### Autenticação de usuário
+#### Autenticação e registro de usuário
+##### Porque essa funcionalidade foi implementada?
+Principalmente para proteger os dados dos usuários e melhorar a usabilidade. Além disso, em aplicações reais normalmente temos essas funcionalidades. 
+##### O que foi feito
+Utilizando algumas funções do Flask-Login e configurando segundo a documentação pude implementar essas funcionalidades com facilidade.
+```
+from flask_login import LoginManager, UserMixin, login_required, current_user, login_user, logout_user
+
+# Secret Key para o flask-login
+app.secret_key = os.environ.get("SECRET_KEY")
+
+# Inicialização do flask-login
+login_manager = LoginManager(app)
+# Indicar página de redirecionamento caso usuário não tenha feito login, será ativado nas rotas com @login_required
+login_manager.login_view = 'loginuser'
+```
+O Flask-Login utiliza cookies para amrazenar as informações da _session_ e assim autenticar e deslogar usuários.
+
+###### Criar a model de usuário
+```
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), unique=True)
+    username = db.Column(db.String(100))
+    password_hash = db.Column(db.String())
+    # Adiciona relação one-to-many com a model Todo
+    tasks = db.relationship('Todo', backref='user', lazy=True)
+
+    # Função para gerar o hash da senha
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+    
+    # Função para checar se a senha corresponde ao hash
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+```
+Devido a relação criada para as tasks, foi necessário adicionar uma coluna a table de Todos
+```
+    # Adiciona Foreign Key referente ao id do usuário
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+```
+###### Criar forms de login e registro
+Foram criadas duas templates, uma para login e outra para registro. Cada template tem seus campos e suas funcionalidades foram implementadas nas rotas `/loginuser` e `/register`, respectivamente.
+
+###### Rota /loginuser
+O email preenchido no formulário de login e utilizado para fazer uma query no banco de dados. Caso um usuário for encontrado e a função `check_password` retornar verdadeiro, a função `login_user` será chamada. Caso contrário o usuário não será logado.
+
+###### Rota /register
+Primeiramente ocorre a validação dos campos preenchidos no formulário. Caso tudo estiver preenchido o código realizará uma nova verificação, mas agora para conferir se o email digitado já está registrado em alguma conta. Caso tudo estiver correto e validado o usuário é registrado e o programa redireciona para a tela de login.
+
+###### Rota /logout
+Apenas desloga o usu
