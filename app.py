@@ -139,6 +139,30 @@ def send_mail(id):
     except:
         return 'ERROR'
 
+# Rota para editar um usuário (É permitido editar o username ou senha)
+@app.route('/edituser/<int:id>', methods=['POST', 'GET'])
+@login_required
+def edituser(id):
+    user = User.query.get_or_404(id)
+    if request.method == 'POST':
+        # Checa se a senha atual foi digitada e está correta, antes de alterar os campos preenchidos
+        if user.check_password(request.form['currentpassword']):
+            # Checa o que foi alterado para atribuir os valores corretamente
+            if len(request.form['username']) != 0:
+                user.username = request.form['username']
+            if len(request.form['password']) != 0:
+                user.set_password(request.form['password'])
+            try:
+                db.session.commit()
+                return redirect('/')
+            except:
+                return 'ERROR'
+        else:
+            return 'Current password is incorrect!'
+    else:
+        return render_template('edit.html')
+
+
 # Rota para autenticar o usuário
 @app.route('/loginuser', methods=['POST', 'GET'])
 def loginuser():
@@ -155,6 +179,8 @@ def loginuser():
         if user is not None and user.check_password(request.form['password']):
             login_user(user)
             return redirect('/')
+        else: 
+            return 'Incorrect email or password'
     
     if request.method == 'GET':
         return render_template('login.html')
