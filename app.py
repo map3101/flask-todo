@@ -61,6 +61,7 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+# declaração da função para o user_loader do flask-login
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -135,12 +136,16 @@ def send_mail(id):
 # Rota para autenticar o usuário
 @app.route('/loginuser', methods=['POST', 'GET'])
 def loginuser():
+    # Se o usuário estiver autenticado ele será redirecionado para a tela principal
     if current_user.is_authenticated:
         return redirect('/')
     
+    # Submit do form de login
     if request.method == 'POST':
         email = request.form['email']
         user = User.query.filter_by(email = email).first()
+        # Caso o email resgatado do banco de dados existir e a senha digitada for compatível com o hash salvo no banco de dados
+        # a função login_user do flask-login é chamada e após o login ser feito o usuário é redirecionado para a tela principal
         if user is not None and user.check_password(request.form['password']):
             login_user(user)
             return redirect('/')
@@ -151,29 +156,36 @@ def loginuser():
 # Rota para registrar um novo usuário
 @app.route('/register', methods=['POST', 'GET'])
 def register():
+    # Se o usuário estiver autenticado ele será redirecionado para a tela principal
     if current_user.is_authenticated:
         return redirect('/')
-     
+    
+    # Submit do form de registro
     if request.method == 'POST':
+        # Resgatar informações inseridas
         email = request.form['email']
         username = request.form['username']
         password = request.form['password']
- 
+
+        # Checar se já existe esse email cadastrado
         if User.query.filter_by(email=email).first():
             return ('Email already Present')
-             
+        
+        # Cria o novo usuário e salva no banco de dados
         user = User(email=email, username=username)
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
+        # Redireciona para a tela de login
         return redirect('/loginuser')
     return render_template('register.html')
 
 @app.route('/logout')
 @login_required
 def logout():
+    # Realiza o logout do usuário e redireciona para a tela de login
     logout_user()
-    return redirect('/')
+    return redirect('/loginuser')
 
 if __name__ == "__main__":
     app.run(debug=True)
