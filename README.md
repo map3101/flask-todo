@@ -137,9 +137,39 @@ Foram criadas duas templates, uma para login e outra para registro. Cada templat
 
 ###### Rota /loginuser
 O email preenchido no formulário de login e utilizado para fazer uma query no banco de dados. Caso um usuário for encontrado e a função `check_password` retornar verdadeiro, a função `login_user` será chamada. Caso contrário o usuário não será logado.
+```
+user = User.query.filter_by(email = email).first()
+        # Caso o email resgatado do banco de dados existir e a senha digitada for compatível com o hash salvo no banco de dados
+        # a função login_user do flask-login é chamada e após o login ser feito o usuário é redirecionado para a tela principal
+        if user is not None and user.check_password(request.form['password']):
+            login_user(user)
+            return redirect('/')
+        else: 
+            return render_template('login.html', error_msg="Incorrect email or password")
+```
 
 ###### Rota /register
 Primeiramente ocorre a validação dos campos preenchidos no formulário. Caso tudo estiver preenchido o código realizará uma nova verificação, mas agora para conferir se o email digitado já está registrado em alguma conta. Caso tudo estiver correto e validado o usuário é registrado e o programa redireciona para a tela de login.
+```
+# Checa se os campos estão preenchidos
+        if not email or not username or not password:
+            return render_template('register.html', error_msg="Please, fill in all fields.")
+        
+        else:
+            # Checar se já existe esse email cadastrado
+            if User.query.filter_by(email=email).first():
+                return render_template('register.html', error_msg="Email already in use")
+            
+            # Cria o novo usuário e salva no banco de dados
+            user = User(email=email, username=username)
+            user.set_password(password)
+            try:
+                db.session.add(user)
+                db.session.commit()
+                # Redireciona para a tela de login
+                return redirect('/loginuser')
+                ...
+```
 
 ###### Rota /logout
 Apenas desloga o usuário e redireciona para a tela de login
@@ -152,6 +182,21 @@ Para permitir uma melhor usabilidade e simular um app mais real.
 Um form simples que permite o usuário editar o username ou senha. É necessário digitar a senha atual para que as mudanças sejam realizadas, caso esse campo não for preenchido ou a senha esteja incorreta uma mensagem de erro será renderizada.
 ###### Rota /edituser/<int:id>
 O parâmetro id é utilizado para realizar uma query e resgatar as informações do usuário logado. Com o submit do form a verificação da senha atual é realizada. Caso estiver correta, o programa atribui os valores que foram alterados e redireciona para a tela inicial.
+```
+user = User.query.get_or_404(id)
+    if request.method == 'POST':
+        # Checa se a senha atual foi digitada e está correta, antes de alterar os campos preenchidos
+        if user.check_password(request.form['currentpassword']):
+            # Checa o que foi alterado para atribuir os valores corretamente
+            if len(request.form['username']) != 0:
+                user.username = request.form['username']
+            if len(request.form['password']) != 0:
+                user.set_password(request.form['password'])
+            try:
+                db.session.commit()
+                return redirect('/')
+                ...
+```
 
 #### 3. Preenchimento automático de email para uma nova tarefa registrada
 Caso o usuário não preencha o campo email para adicionar uma nova tarefa ela é criada com o email do usuário logado. Se o usuário desejar criar a tarefa com outro email, basta preencher o campo do form.
