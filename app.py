@@ -10,7 +10,7 @@ from sqlalchemy import false
 
 app = Flask(__name__)
 # Secret Key para o flask-login
-app.secret_key = 'thisisecret'
+app.secret_key = os.environ.get("SECRET_KEY")
 # Configuração do BD
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 # Configurações para o envio de emails
