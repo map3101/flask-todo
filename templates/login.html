@@ -10,7 +10,7 @@
     <p>password <input type = "password" name = "password" /></p>
     <input type="submit" value="Login" id="addButton"/>
 </form>
-
+<p style="color: red">{{ error_msg }}</p>
 <h3>Dont Have an account??</h3>
 <h3><a href = "{{url_for('register') }}">Register Here</a></h3>
 </div>

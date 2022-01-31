@@ -180,10 +180,10 @@ def loginuser():
             login_user(user)
             return redirect('/')
         else: 
-            return 'Incorrect email or password'
+            return render_template('login.html', error_msg="Incorrect email or password")
     
     if request.method == 'GET':
-        return render_template('login.html')
+        return render_template('login.html', error_msg="")
 
 # Rota para registrar um novo usuário
 @app.route('/register', methods=['POST', 'GET'])
@@ -206,7 +206,7 @@ def register():
         else:
             # Checar se já existe esse email cadastrado
             if User.query.filter_by(email=email).first():
-                return ('Email already Present')
+                return render_template('register.html', error_msg="Email already in use")
             
             # Cria o novo usuário e salva no banco de dados
             user = User(email=email, username=username)
