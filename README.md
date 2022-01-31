@@ -91,7 +91,7 @@ def send_mail(id):
 
 ### Funcionalidades da terceira etapa
 Foram implementadas 3 funcionalidades.
-#### Autenticação e registro de usuário
+#### 1. Autenticação e registro de usuário
 ##### Porque essa funcionalidade foi implementada?
 Principalmente para proteger os dados dos usuários e melhorar a usabilidade. Além disso, em aplicações reais normalmente temos essas funcionalidades. 
 ##### O que foi feito
@@ -142,4 +142,13 @@ O email preenchido no formulário de login e utilizado para fazer uma query no b
 Primeiramente ocorre a validação dos campos preenchidos no formulário. Caso tudo estiver preenchido o código realizará uma nova verificação, mas agora para conferir se o email digitado já está registrado em alguma conta. Caso tudo estiver correto e validado o usuário é registrado e o programa redireciona para a tela de login.
 
 ###### Rota /logout
-Apenas desloga o usu
+Apenas desloga o usuário e redireciona para a tela de login
+
+#### 2. Editar usuário
+##### Porque essa funcionalidade foi implementada?
+Para permitir uma melhor usabilidade e simular um app mais real.
+##### O que foi feito
+###### Criar uma página html com um form para editar o usuário
+Um form simples que permite o usuário editar o username ou senha. É necessário digitar a senha atual para que as mudanças sejam realizadas, caso esse campo não for preenchido ou a senha esteja incorreta uma mensagem de erro será renderizada.
+###### Rota /edituser/<int:id>
+O parâmetro id é utilizado para realizar uma query e resgatar as informações do usuário logado. Com o submit do form a verificação da senha atual é realizada. Caso estiver correta, o programa atribui os valores que foram alterados e redireciona para a tela inicial.
