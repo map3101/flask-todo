@@ -156,11 +156,11 @@ def edituser(id):
                 db.session.commit()
                 return redirect('/')
             except:
-                return 'ERROR'
+                return render_template('edit.html', error_msg="An error occured, try again")
         else:
-            return 'Current password is incorrect!'
+            return render_template('edit.html', error_msg="Current password is incorrect")
     else:
-        return render_template('edit.html')
+        return render_template('edit.html', error_msg="")
 
 
 # Rota para autenticar o usuário
