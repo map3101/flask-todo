@@ -156,11 +156,11 @@ def edituser(id):
                 db.session.commit()
                 return redirect('/')
             except:
-                return 'ERROR'
+                return render_template('edit.html', error_msg="An error occured, try again")
         else:
-            return 'Current password is incorrect!'
+            return render_template('edit.html', error_msg="Current password is incorrect")
     else:
-        return render_template('edit.html')
+        return render_template('edit.html', error_msg="")
 
 
 # Rota para autenticar o usuário
@@ -180,10 +180,10 @@ def loginuser():
             login_user(user)
             return redirect('/')
         else: 
-            return 'Incorrect email or password'
+            return render_template('login.html', error_msg="Incorrect email or password")
     
     if request.method == 'GET':
-        return render_template('login.html')
+        return render_template('login.html', error_msg="")
 
 # Rota para registrar um novo usuário
 @app.route('/register', methods=['POST', 'GET'])
@@ -199,18 +199,26 @@ def register():
         username = request.form['username']
         password = request.form['password']
 
-        # Checar se já existe esse email cadastrado
-        if User.query.filter_by(email=email).first():
-            return ('Email already Present')
+        # Checa se os campos estão preenchidos
+        if not email or not username or not password:
+            return render_template('register.html', error_msg="Please, fill in all fields.")
         
-        # Cria o novo usuário e salva no banco de dados
-        user = User(email=email, username=username)
-        user.set_password(password)
-        db.session.add(user)
-        db.session.commit()
-        # Redireciona para a tela de login
-        return redirect('/loginuser')
-    return render_template('register.html')
+        else:
+            # Checar se já existe esse email cadastrado
+            if User.query.filter_by(email=email).first():
+                return render_template('register.html', error_msg="Email already in use")
+            
+            # Cria o novo usuário e salva no banco de dados
+            user = User(email=email, username=username)
+            user.set_password(password)
+            try:
+                db.session.add(user)
+                db.session.commit()
+                # Redireciona para a tela de login
+                return redirect('/loginuser')
+            except:
+                return render_template('register.html', error_msg="Error, try again")
+    return render_template('register.html', error_msg="")
 
 @app.route('/logout')
 @login_required
