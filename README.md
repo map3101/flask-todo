@@ -1,5 +1,8 @@
 # flask-todo
-Atividade Prática do processo seletivo de estágio da BlueBridge
+Atividade Prática do processo seletivo de estágio Backend da BlueBridge
+
+#### Link do deploy no heroku:https://flask-todo-ps.herokuapp.com/ 
+Como a atividade tem o foco no backend, o design das telas não está robusto. Os esforços foram nas funcionalidades do backend.
 
 ### Como rodar o projeto
 Requisitos: Python3.+ e pip3
