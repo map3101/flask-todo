@@ -11,7 +11,7 @@
         <p>password <input type="password" name="password" /></p>
         <input type="submit" value="Register" id="addButton"/>
     </form>
-
+    {{ error_msg }}
     <h3>Already Have an account?</h3>
     <h3><a href = "{{url_for('loginuser') }}">Login Here</a></h3>
 </div>
