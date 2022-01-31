@@ -73,7 +73,7 @@ def index():
         task_content = request.form['content']
         task_email = request.form['email']
         # Cria uma nova tarefa baseado na Model Todo
-        new_task = Todo(content=task_content, email=task_email)
+        new_task = Todo(content=task_content, email=task_email, user_id=current_user.id)
 
         try:
             db.session.add(new_task)
@@ -82,8 +82,8 @@ def index():
         except:
             return 'ERROR'
     else:
-        # Salva as tarefas na ordem das mais recentes primeiro
-        tasks = Todo.query.order_by(Todo.date_created.desc()).all()
+        # Busca as tarefas do usuário que está logado (current_user do flask-login)
+        tasks = Todo.query.filter_by(user_id = current_user.id).all()
         return render_template('index.html', tasks=tasks)
 
 @app.route('/delete/<int:id>')
